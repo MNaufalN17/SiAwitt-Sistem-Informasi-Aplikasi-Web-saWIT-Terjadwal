@@ -1,10 +1,8 @@
 <?php
 
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Model;
 
-class BlokKebun extends Model
-{
-    //
+class BlokKebun extends Model {
+    protected $fillable = ['nama_blok', 'luas_lahan', 'lokasi', 'keterangan'];
 }
