@@ -12,9 +12,23 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('jadwal_kegiatans', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        $table->id();
+        
+        // Relasi ke tabel blok_kebuns dan pekerjas
+        $table->foreignId('blok_kebun_id')->constrained('blok_kebuns')->onDelete('cascade');
+        $table->foreignId('pekerja_id')->constrained('pekerjas')->onDelete('cascade');
+        
+        // Kolom data kegiatan
+        $table->string('jenis_kegiatan'); // Panen atau Pemupukan
+        $table->date('tanggal_kegiatan'); // INI KOLOM YANG HILANG TADI
+        $table->string('status')->default('Belum Dikerjakan'); // Belum Dikerjakan, Menunggu Verifikasi, Selesai
+        
+        // Kolom untuk verifikasi admin
+        $table->string('metode_verifikasi')->nullable();
+        $table->text('catatan_admin')->nullable();
+        
+        $table->timestamps();
+    });
     }
 
     /**

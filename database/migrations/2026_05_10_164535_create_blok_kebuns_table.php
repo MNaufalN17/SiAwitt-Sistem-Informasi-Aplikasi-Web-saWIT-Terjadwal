@@ -12,9 +12,16 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('blok_kebuns', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        $table->id();
+        
+        // PASTIKAN KOLOM-KOLOM INI ADA:
+        $table->string('nama_blok');
+        $table->decimal('luas_lahan', 8, 2); // 8 digit total, 2 di belakang koma
+        $table->string('lokasi');
+        $table->text('keterangan')->nullable();
+        
+        $table->timestamps();
+    });
     }
 
     /**

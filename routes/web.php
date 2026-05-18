@@ -9,7 +9,6 @@ use App\Http\Controllers\JadwalKegiatanController;
 use App\Http\Controllers\LaporanPekerjaanController;
 use App\Http\Controllers\LaporanController;
 
-
 // Langsung arahkan halaman utama (root) ke form login
 Route::get('/', function () {
     return view('auth.login');
@@ -18,13 +17,15 @@ Route::get('/', function () {
 // Memuat rute autentikasi bawaan Laravel UI (Login, Logout, Passwords)
 Auth::routes();
 
+// Memaksa redirect dari /home ke /dashboard untuk mencegah error 404
+Route::redirect('/home', '/dashboard');
+
 // Grup rute yang hanya bisa diakses jika pengguna sudah login
 Route::middleware(['auth'])->group(function () {
  
     // Dashboard (Controller akan memisahkan view berdasarkan role)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
- 
     // CRUD Data Master: Blok Kebun
     Route::resource('blok-kebun', BlokKebunController::class);
     

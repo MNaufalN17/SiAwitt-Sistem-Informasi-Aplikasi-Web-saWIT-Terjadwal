@@ -12,9 +12,19 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('laporan_pekerjaans', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        $table->id();
+        
+        // DUA KOLOM INI WAJIB ADA SEBAGAI PENGHUBUNG:
+        $table->foreignId('jadwal_kegiatan_id')->constrained('jadwal_kegiatans')->onDelete('cascade');
+        $table->foreignId('pekerja_id')->constrained('pekerjas')->onDelete('cascade');
+        
+        // Kolom isi laporan
+        $table->text('catatan_pekerja')->nullable();
+        $table->string('foto_bukti');
+        $table->date('tanggal_lapor');
+        
+        $table->timestamps();
+    });
     }
 
     /**
