@@ -1,24 +1,47 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\BlokKebunController;
+use App\Http\Controllers\PekerjaController;
+use App\Http\Controllers\JadwalKegiatanController;
+use App\Http\Controllers\LaporanPekerjaanController;
+use App\Http\Controllers\LaporanController;
 
+
+// Langsung arahkan halaman utama (root) ke form login
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-require __DIR__.'/auth.php';
-
+// Memuat rute autentikasi bawaan Laravel UI (Login, Logout, Passwords)
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+// Grup rute yang hanya bisa diakses jika pengguna sudah login
+Route::middleware(['auth'])->group(function () {
+ 
+    // Dashboard (Controller akan memisahkan view berdasarkan role)
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+ 
+    // CRUD Data Master: Blok Kebun
+    Route::resource('blok-kebun', BlokKebunController::class);
+    
+    // CRUD Data Master: Pekerja Lapangan (Termasuk pembuatan akun)
+    Route::resource('pekerja', PekerjaController::class);
+    
+    // CRUD & Verifikasi: Jadwal Kegiatan Panen / Pemupukan
+    Route::resource('jadwal-kegiatan', JadwalKegiatanController::class);
+    
+    // Rekapitulasi: Laporan Kegiatan yang sudah selesai
+    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+    
+    // ---------------------------------------------------------
+    // Rute Khusus Akses Pekerja Lapangan
+    // ---------------------------------------------------------
+    
+    // Proses upload foto dan pengiriman laporan hasil kerja
+    Route::resource('laporan-pekerjaan', LaporanPekerjaanController::class)->only(['store']);
+    
+});

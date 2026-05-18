@@ -18,19 +18,19 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Data Blok</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Data Pekerja</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Jadwal & Verifikasi</a>
-                    </li>
-                </ul>
+           <li class="nav-item">
+             <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Dashboard</a>
+         </li>
+             <li class="nav-item">
+             <a class="nav-link {{ request()->routeIs('blok-kebun.*') ? 'active' : '' }}" href="{{ route('blok-kebun.index') }}">Data Blok</a>
+          </li>
+             <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('pekerja.*') ? 'active' : '' }}" href="{{ route('pekerja.index') }}">Data Pekerja</a>
+          </li>
+    <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('jadwal-kegiatan.*') ? 'active' : '' }}" href="{{ route('jadwal-kegiatan.index') }}">Jadwal & Verifikasi</a>
+    </li>
+</ul>
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
