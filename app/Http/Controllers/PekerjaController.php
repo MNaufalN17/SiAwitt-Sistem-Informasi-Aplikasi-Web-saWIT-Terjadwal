@@ -14,7 +14,7 @@ class PekerjaController extends Controller
     {
         // Menampilkan daftar pekerja dengan mengambil data relasi akun user-nya
         $pekerjas = Pekerja::with('user')->get();
-        return view('admin.pekerja.index', compact('pekerjas'));
+        return view('pekerja.index', compact('pekerjas'));
     }
 
     public function store(Request $request)

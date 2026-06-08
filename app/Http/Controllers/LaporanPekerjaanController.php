@@ -2,36 +2,44 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\LaporanPekerjaan;
 use App\Models\JadwalKegiatan;
-use Illuminate\Http\Request;
-use Carbon\Carbon;
 
 class LaporanPekerjaanController extends Controller
 {
     public function store(Request $request)
     {
+        // 1. Validasi: foto_bukti dibuat menjadi 'nullable'
         $request->validate([
-            'foto_bukti' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'jadwal_kegiatan_id' => 'required',
+            'pekerja_id' => 'required',
+            'catatan_pekerja' => 'required', // Catatan jadi wajib sebagai ganti foto
+            'foto_bukti' => 'nullable|image|mimes:jpeg,png,jpg|max:5120', // Boleh kosong (nullable)
         ]);
 
-        // Simpan foto ke storage public
-        $path = $request->file('foto_bukti')->store('bukti_pekerjaan', 'public');
+        // 2. Proses Upload Foto (Hanya jika gambar diunggah)
+        $fotoPath = null;
+        if ($request->hasFile('foto_bukti')) {
+            $fotoPath = $request->file('foto_bukti')->store('bukti_lapangan', 'public');
+        }
 
-        // Buat data laporan
+        // 3. Simpan ke database Laporan
         LaporanPekerjaan::create([
             'jadwal_kegiatan_id' => $request->jadwal_kegiatan_id,
             'pekerja_id' => $request->pekerja_id,
             'catatan_pekerja' => $request->catatan_pekerja,
-            'foto_bukti' => $path,
-            'tanggal_lapor' => Carbon::now()
+            'foto_bukti' => $fotoPath, // Akan bernilai null jika tidak ada foto
+            'tanggal_lapor' => now(),
         ]);
 
-        // Ubah status jadwal menjadi Menunggu Verifikasi
-        JadwalKegiatan::where('id', $request->jadwal_kegiatan_id)->update([
-            'status' => 'Menunggu Verifikasi'
-        ]);
+        // 4. Ubah status jadwal menjadi 'Menunggu Verifikasi'
+        $jadwal = JadwalKegiatan::find($request->jadwal_kegiatan_id);
+        if ($jadwal) {
+            $jadwal->update(['status' => 'Menunggu Verifikasi']);
+        }
 
-        return redirect()->back()->with('success', 'Laporan berhasil dikirim, menunggu verifikasi Admin.');
+        // 5. Kembali ke halaman pekerja
+        return redirect()->route('dashboard')->with('success', 'Laporan berhasil dikirim ke Mandor!');
     }
 }
